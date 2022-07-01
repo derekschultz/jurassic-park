@@ -13,6 +13,7 @@ func main() {
 	models.ConnectDatabase()
 
 	r.GET("/species", controllers.FindSpecies)
+	r.GET("/species/:name", controllers.FindSpeciesByName)
 	r.POST("/species", controllers.CreateSpecies)
 	r.PATCH("/species/:id", controllers.UpdateSpecies)
 	r.DELETE("/species/:id", controllers.DeleteSpecies)

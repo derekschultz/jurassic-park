@@ -6,10 +6,10 @@ import "gorm.io/gorm"
 type Cage struct {
 	gorm.Model
 	// ID          int `json:"id" gorm:"primary_key"`
+	CageID      int `json:"cageId"`
 	Capacity    int `json:"capacity" gorm:"default:0"`
 	MaxCapacity int `json:"maxCapacity" gorm:"default:4"`
 	// Cage should have info regarding what species is being contained
-	SpeciesID int
-	Species   []Species `json:"species" gorm:"foreignKey:SpeciesID"`             // has many association
-	Status    string    `json:"status" gorm:"check:status IN ('ACTIVE','DOWN')"` // required
+	Species []Species `json:"species" gorm:"foreignKey:CageID"`                // has many association
+	Status  string    `json:"status" gorm:"check:status IN ('ACTIVE','DOWN')"` // required
 }

@@ -6,9 +6,8 @@ import "gorm.io/gorm"
 type Species struct {
 	gorm.Model
 	// ID     int    `json:"id" gorm:"primary_key"`
-	SpeciesID uint
-	Name      string `json:"name"`
-	Diet      string `json:"diet"`
-	CageID    int    `json:"cageId"`
-	Quantity  int    `json:"quantity" gorm:"default:1"`
+	Name     string `json:"name"`
+	CageID   int    `json:"cageId"`
+	Diet     string `json:"diet"`
+	Quantity int    `json:"quantity" gorm:"default:1"`
 }
