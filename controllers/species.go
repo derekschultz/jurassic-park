@@ -20,7 +20,7 @@ func FindSpecies(c *gin.Context) {
 
 type CreateSpeciesInput struct {
 	Name     string `json:"name" binding:"required"`
-	CageId   int    `json:"cageId"`
+	CageID   int    `json:"cageId"`
 	Diet     string `json:"diet" binding:"required"`
 	Quantity int    `json:"quantity"`
 }
@@ -58,9 +58,14 @@ func CreateSpecies(c *gin.Context) {
 type UpdateSpeciesInput struct {
 	gorm.Model
 	Name     string `json:"name"`
-	CageId   int    `json:"cageId"`
+	CageID   int    `json:"cageId"`
 	Diet     string `json:"diet"`
 	Quantity int    `json:"quantity"`
+}
+
+type CageStatus struct {
+	CageID int    `json:"cageId"`
+	Status string `json:"status"`
 }
 
 // PATCH /species/:id
@@ -80,7 +85,20 @@ func UpdateSpecies(c *gin.Context) {
 		return
 	}
 
-	fmt.Printf("\n species: %v, cageId: %v", input.Name, input.CageId) // DEBUG
+	// FIXME: allow user to set cageId to zero value
+	var cageStatus CageStatus
+	if input.CageID != 0 {
+		// Check status of cage
+		if err := models.DB.Model(&models.Cage{}).Where("id = ?", input.CageID).Find(&cageStatus).Error; err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"statusCode": 400, "error": err.Error()})
+			return
+		}
+		fmt.Printf("cageID: %v, cageStatus: %v", input.CageID, cageStatus.Status)
+		if cageStatus.Status == "DOWN" {
+			c.JSON(http.StatusBadRequest, gin.H{"statusCode": 400, "error": "Oops, cannot move to cage with DOWN status!"})
+			return
+		}
+	}
 
 	models.DB.Model(&species).Where("id = ?", c.Param("id")).Updates(input)
 

@@ -79,10 +79,10 @@ func CreateCage(c *gin.Context) {
 type UpdateCageInput struct {
 	// need gorm.Model to avoid panic on setting Status
 	gorm.Model
-	Capacity    int `json:"capacity"`
-	MaxCapacity int `json:"maxCapacity"`
-	SpeciesID   int
-	Species     []models.Species `json:"species" gorm:"foreignKey:SpeciesID"`
+	CageID      int              `json:"cageId"`
+	Capacity    int              `json:"capacity"`
+	MaxCapacity int              `json:"maxCapacity"`
+	Species     []models.Species `json:"species" gorm:"foreignKey:CageID"`
 	Status      string           `json:"status"`
 }
 
@@ -123,16 +123,12 @@ func UpdateCage(c *gin.Context) {
 	var cageCapacity int
 	models.DB.Model(&cage).Where("id = ?", c.Param("id")).Select("capacity").Find(&cageCapacity)
 	fmt.Printf("cageCapacity: %v", cageCapacity) // DEBUG
-
 	if input.Status == "DOWN" && cageCapacity > 0 {
 		c.JSON(http.StatusBadRequest, gin.H{"statusCode": 400, "error": "Oops, cannot power down cage with capacity > 0!"})
 		return
 	}
 
-	fmt.Printf("\n input: %v", input) // DEBUG
-
 	models.DB.Model(&cage).Where("id = ?", c.Param("id")).Updates(input)
-	// models.DB.Model(&cage).Updates(map[string]interface{}{"capacity": input.Capacity, "maxCapacity": input.MaxCapacity, "status": input.Status})
 
 	c.JSON(http.StatusOK, gin.H{"statusCode": c.Writer.Status(), "data": cage})
 }

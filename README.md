@@ -12,7 +12,7 @@ ability to edit/retrieve the statuses of dinosaurs and cages.
 - [x] Cages know how many dinosaurs are contained.
 - [x] Cages have a power status of ACTIVE or DOWN.
 - [x] Cages cannot be powered off if they contain dinosaurs.
-- [ ] Dinosaurs cannot be moved into a cage that is powered down.
+- [x] Dinosaurs cannot be moved into a cage that is powered down.
 - [x] Each dinosaur must have a name.
 - [x] Each dinosaur must have a species (See enumerated list below, feel free to add
 others).
