@@ -13,7 +13,10 @@ import (
 // Get all species
 func FindSpecies(c *gin.Context) {
 	var species []models.Species
-	models.DB.Find(&species)
+	if err := models.DB.Find(&species).Error; err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"statusCode": 400, "error": err.Error()})
+		return
+	}
 
 	c.JSON(http.StatusOK, gin.H{"statusCode": c.Writer.Status(), "data": species})
 }
