@@ -125,7 +125,7 @@ func UpdateCage(c *gin.Context) {
 	// Check if cage has dinosaurs in it, if so, cannot toggle power from 'ACTIVE' to 'DOWN'
 	var cageCapacity int
 	models.DB.Model(&cage).Where("id = ?", c.Param("id")).Select("capacity").Find(&cageCapacity)
-	fmt.Printf("cageCapacity: %v", cageCapacity) // DEBUG
+	fmt.Printf("cageCapacity: %v\n", cageCapacity) // DEBUG
 	if input.Status == "DOWN" && cageCapacity > 0 {
 		c.JSON(http.StatusBadRequest, gin.H{"statusCode": 400, "error": "Oops, cannot power down cage with capacity > 0!"})
 		return

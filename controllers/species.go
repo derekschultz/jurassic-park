@@ -67,8 +67,9 @@ type UpdateSpeciesInput struct {
 }
 
 type CageStatus struct {
-	CageID int    `json:"cageId"`
-	Status string `json:"status"`
+	CageID   int    `json:"cageId"`
+	Capacity int    `json:"capacity"`
+	Status   string `json:"status"`
 }
 
 // PATCH /species/:id
@@ -96,7 +97,7 @@ func UpdateSpecies(c *gin.Context) {
 			c.JSON(http.StatusBadRequest, gin.H{"statusCode": 400, "error": err.Error()})
 			return
 		}
-		fmt.Printf("cageID: %v, cageStatus: %v", input.CageID, cageStatus.Status)
+		fmt.Printf("cageID: %v, cageStatus: %v\n", input.CageID, cageStatus.Status) // DEBUG
 		if cageStatus.Status == "DOWN" {
 			c.JSON(http.StatusBadRequest, gin.H{"statusCode": 400, "error": "Oops, cannot move to cage with DOWN status!"})
 			return
@@ -104,6 +105,21 @@ func UpdateSpecies(c *gin.Context) {
 	}
 
 	models.DB.Model(&species).Where("id = ?", c.Param("id")).Updates(input)
+
+	if input.Quantity != 0 {
+		// Find capacity of cage_id in species table
+		if err := models.DB.Model(&species).Where("id = ?", c.Param("id")).Select("cage_id, SUM(quantity) as capacity").Find(&cageStatus).Error; err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"statusCode": 400, "error": err.Error()})
+			return
+		}
+		fmt.Printf("cage_id: %v, capacity: %v\n", cageStatus.CageID, cageStatus.Capacity) // DEBUG
+		fmt.Println("\nHOLD ONTO YOUR BUTTS!")
+		// Update capacity field in cages table
+		if err := models.DB.Model(&models.Cage{}).Where("id = ?", cageStatus.CageID).Update("capacity", cageStatus.Capacity).Error; err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"statusCode": 400, "error": err.Error()})
+			return
+		}
+	}
 
 	c.JSON(http.StatusOK, gin.H{"statusCode": c.Writer.Status(), "data": species})
 }
