@@ -17,8 +17,8 @@ ability to edit/retrieve the statuses of dinosaurs and cages.
 - [x] Each dinosaur must have a species (See enumerated list below, feel free to add
 others).
 - [x] Each dinosaur is considered an herbivore or a carnivore, depending on its species.
-- [ ] Herbivores cannot be in the same cage as carnivores.
-- [ ] Carnivores can only be in a cage with other dinosaurs of the same species.
+- [x] Herbivores cannot be in the same cage as carnivores.
+- [x] Carnivores can only be in a cage with other dinosaurs of the same species.
 - [x] Must be able to query a listing of dinosaurs in a specific cage.
 - [x] When querying dinosaurs or cages they should be filterable on their attributes
 (Cages on their power status and dinosaurs on species).

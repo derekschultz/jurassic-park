@@ -13,7 +13,7 @@ import (
 // Get all cages
 func FindCages(c *gin.Context) {
 	var cage []models.Cage
-	if err := models.DB.Find(&cage).Error; err != nil {
+	if err := models.DB.Preload("Species").Find(&cage).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"statusCode": 400, "error": err.Error()})
 		return
 	}
